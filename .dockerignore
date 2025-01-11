@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+build
+
+# Environment files
+.env*
+!.env.example
+
+# Development files
+.git
+.gitignore
+README.md
+*.log
+.vscode
+.idea
+
+# Fly.io files
+fly.toml
+
+# Temporary files
+*.swp
+.DS_Store
+Thumbs.db 
