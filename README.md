@@ -1,5 +1,7 @@
 # Duck Agents
 
+> ⚠️ **IMPORTANT**: The Duck Agent Network is currently in private beta and not available to the public. Please check back later for public access.
+
 P2P agents that can analyze market data and respond to messages.
 
 ## Quick Start
