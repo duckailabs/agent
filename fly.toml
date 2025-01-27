@@ -8,7 +8,10 @@ primary_region = "lax"
   NODE_ENV = "production"
   PORT = "3000"
   P2P_PORT = "8000"
-  P2P_NODE_PATH = "/app/node/p2p-node"
+  GRPC_PORT = "50051"  # Only used internally
+  P2P_NODE_PATH = "/app/sdk/p2p-node.js"
+  PRIVATE_KEY = "${PRIVATE_KEY}"
+  LOG_TO_CONSOLE = "true"
 
 [http_service]
   internal_port = 3000
@@ -16,6 +19,16 @@ primary_region = "lax"
   auto_stop_machines = false
   auto_start_machines = true
   min_machines_running = 1
+  processes = ["app"]
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 3000
+    handlers = ["http"]
 
 [[services]]
   protocol = "tcp"
@@ -24,7 +37,6 @@ primary_region = "lax"
 
   [[services.ports]]
     port = 8000
-    handlers = ["proxy_proto"]
 
 [metrics]
   port = 9091
@@ -32,3 +44,8 @@ primary_region = "lax"
 
 [processes]
   app = "pnpm run agent" 
+
+[vm]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 1 

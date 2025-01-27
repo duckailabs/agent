@@ -1,36 +1,63 @@
-import { config } from "dotenv";
-import { Agent } from "./agents/agent";
+import { P2PClient } from "../sdk/src/p2p";
+import { Message } from "../sdk/src/p2p/types";
+import { config } from "./config";
 import { Logger } from "./utils/logger";
 
-// Load environment variables
+// Initialize client variable in broader scope
+let client: P2PClient;
+
+async function handleMessage(message: Message) {
+  try {
+    Logger.info("agent", "Got message", {
+      from: message.fromAgentId,
+      content: message.content,
+    });
+
+    // Echo back to sender
+    await client.sendMessage(message.fromAgentId, `Echo: ${message.content}`);
+  } catch (error) {
+    Logger.error("agent", "Failed to handle message", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
 
 async function main() {
-  config();
-  // Required configuration
-  const nodePath = process.env.P2P_NODE_PATH;
-  const privateKey = process.env.P2P_PRIVATE_KEY;
-
-  if (!nodePath || !privateKey) {
-    console.error("Error: P2P_NODE_PATH and P2P_PRIVATE_KEY are required");
-    process.exit(1);
-  }
-
-  // Optional configuration with defaults
-  const port = parseInt(process.env.P2P_PORT || "8000");
-  const agentName = process.env.AGENT_NAME || "duck-agent";
   try {
-    // Initialize logger with both stdout and file logging
-    await Logger.init(agentName, { useStdout: true, useFile: true });
+    // Initialize logger
+    await Logger.init("agent", { useStdout: true });
 
-    // Create and start agent
-    const agent = new Agent(agentName, port, nodePath, privateKey as string);
-    await agent.start();
+    // Initialize P2P client
+    client = new P2PClient({
+      address: config.p2p.address || "localhost:50051",
+      binaryPath: config.p2p.binaryPath,
+      timeout: 5000,
+    });
 
-    // Handle process signals
-    process.on("SIGINT", () => agent.stop());
-    process.on("SIGTERM", () => agent.stop());
+    // Register message handler before connecting
+    client.onMessage(handleMessage);
+
+    // Connect to P2P network
+    await client.connect({
+      port: config.p2p.port,
+      agentId: config.agentId || "default-agent",
+    });
+
+    Logger.info("agent", "Agent started", {
+      agentId: config.agentId,
+      p2pAddress: config.p2p.address,
+    });
+
+    // Handle shutdown
+    process.on("SIGINT", async () => {
+      Logger.info("agent", "Shutting down");
+      await client.disconnect();
+      process.exit(0);
+    });
   } catch (error) {
-    Logger.error("run-agent", "Failed to start agent", { error });
+    Logger.error("agent", "Failed to start agent", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     process.exit(1);
   }
 }

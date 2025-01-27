@@ -12,7 +12,7 @@ type LogHandler = (
 
 export class Logger {
   private static logHandler: LogHandler | null = null;
-  private static useStdout = true;
+  private static useStdout = false; // Default to false
   private static useFile = false;
   private static logFile: string | null = null;
 
@@ -20,11 +20,12 @@ export class Logger {
     namespace: string,
     options: { useStdout?: boolean; useFile?: boolean } = {}
   ) {
-    this.useStdout = options.useStdout ?? true;
+    // Check environment variable for console output
+    this.useStdout =
+      process.env.LOG_TO_CONSOLE === "true" || options.useStdout === true;
     this.useFile = options.useFile ?? false;
 
     if (this.useFile) {
-      // Create logs directory if it doesn't exist
       const logsDir = path.resolve(process.cwd(), "logs");
       try {
         await fs.mkdir(logsDir, { recursive: true });
@@ -61,7 +62,6 @@ export class Logger {
     message: string,
     meta?: any
   ) {
-    // Call custom log handler if set
     if (this.logHandler) {
       this.logHandler(level, namespace, message, meta);
       return;

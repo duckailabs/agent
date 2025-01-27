@@ -1,5 +1,3 @@
-import { getMarketUpdate } from "../services/fatduck";
-
 export const AGENT_CONFIG = {
   prompt: `Provide a clear and concise market update based on the provided data.
 
@@ -15,10 +13,9 @@ Guidelines:
   tool: {
     name: "market-analyzer",
     execute: async () => {
-      const data = await getMarketUpdate("1hr");
       return {
         success: true,
-        data,
+        data: "test",
       };
     },
   },

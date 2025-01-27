@@ -15,7 +15,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Make p2p-node executable
-RUN chmod +x /app/node/p2p-node
+RUN chmod +x /app/sdk/p2p-node.js
 
 # Build the project
 RUN pnpm run build
