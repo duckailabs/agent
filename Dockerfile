@@ -20,5 +20,8 @@ RUN chmod +x /app/sdk/p2p-node.js
 # Build the project
 RUN pnpm run build
 
+# Expose both P2P and HTTP ports
+EXPOSE 8000 3000
+
 # Start the agent
-CMD ["pnpm", "run", "agent"] 
+CMD ["pnpm", "run", "start"] 
