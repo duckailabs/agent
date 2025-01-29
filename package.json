@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "tsc",
     "start": "dotenv -e .env -- tsx src/index.ts",
     "agent": "tsx src/run-agent.ts",
     "typecheck": "tsc --noEmit",
