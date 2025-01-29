@@ -6,11 +6,11 @@ primary_region = "lax"
 
 [env]
   NODE_ENV = "production"
+  AGENT_NAME = "ducky"
   PORT = "3000"
   P2P_PORT = "8000"
   GRPC_PORT = "50051"  # Only used internally
   P2P_NODE_PATH = "/app/sdk/p2p-node.js"
-  PRIVATE_KEY = "${PRIVATE_KEY}"
   LOG_TO_CONSOLE = "true"
 
 [http_service]
