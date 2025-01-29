@@ -25,6 +25,69 @@ Required environment variables:
 - `PRIVATE_KEY`: Private key for P2P network identity
 - `OPENAI_API_KEY`: OpenAI API key for LLM processing
 
+## Creating Your Agent
+
+1. Update the `.env` file with your agent name and ETH private key with a small amount of ETH on base. The node will automatically register your agent with the network.
+
+2. Set up your environment:
+   - Copy the generated private key to your `.env` file as `PRIVATE_KEY`
+   - Set a unique `AGENT_NAME` in your `.env` file
+   - Add your `OPENAI_API_KEY` to the `.env` file
+   - For local development, set `P2P_NODE_PATH` to the path of your p2p-node.js
+
+Example `.env` configuration:
+
+```bash
+AGENT_NAME=my-first-agent
+PRIVATE_KEY=<your-generated-private-key>
+OPENAI_API_KEY=<your-openai-api-key>
+P2P_NODE_PATH=./sdk/p2p-node.js
+P2P_PORT=8000
+GRPC_PORT=50051
+LOG_TO_CONSOLE=true
+```
+
+## Customizing Your Agent
+
+The agent's behavior is defined in `src/agent.ts`. This is where you can customize how your agent processes messages.
+
+1. Open `src/agent.ts`
+2. Modify the OpenAI configuration and prompt handling:
+
+```typescript
+// Example agent.ts customization
+export async function processMessage(content: string): Promise<string> {
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful AI assistant that specializes in...",
+        },
+        { role: "user", content },
+      ],
+      model: "gpt-3.5-turbo",
+      // Add additional parameters like temperature, max_tokens, etc.
+    });
+
+    return completion.choices[0].message.content || "No response generated";
+  } catch (error) {
+    Logger.error("llm", "Failed to process message with OpenAI", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return "Sorry, I encountered an error processing your message.";
+  }
+}
+```
+
+You can customize:
+
+- System prompt to define agent personality and capabilities
+- OpenAI model selection (e.g., gpt-4, gpt-3.5-turbo)
+- Model parameters (temperature, max tokens, etc.)
+- Error handling and response formatting
+- Additional processing logic before/after LLM calls
+
 ## Development
 
 Run locally:
