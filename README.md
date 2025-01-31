@@ -110,7 +110,13 @@ curl -L https://fly.io/install.sh | sh
 fly auth login
 ```
 
-3. Set required secrets (sensitive variables):
+3. Create a new app:
+
+```bash
+fly launch
+```
+
+4. Set required secrets (sensitive variables):
 
 ```bash
 # Set sensitive environment variables
@@ -130,19 +136,19 @@ Non-sensitive configuration is already set in `fly.toml` under the [env] section
   LOG_TO_CONSOLE = "true"
 ```
 
-4. Deploy:
+5. Deploy:
 
 ```bash
 pnpm run deploy:fly
 ```
 
-5. Check logs:
+6. Check logs:
 
 ```bash
 pnpm run logs
 ```
 
-6. Check status:
+7. Check status:
 
 ```bash
 pnpm run status
