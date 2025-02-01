@@ -110,18 +110,18 @@ curl -L https://fly.io/install.sh | sh
 fly auth login
 ```
 
-3. Create a new app:
-
-```bash
-fly launch
-```
-
-4. Set required secrets (sensitive variables):
+3. Set required secrets (sensitive variables):
 
 ```bash
 # Set sensitive environment variables
 fly secrets set PRIVATE_KEY="your-private-key" \
                OPENAI_API_KEY="your-openai-api-key"
+```
+
+4. Create a new app:
+
+```bash
+fly launch
 ```
 
 Non-sensitive configuration is already set in `fly.toml` under the [env] section:

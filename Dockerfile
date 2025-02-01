@@ -17,8 +17,6 @@ COPY . .
 # Make p2p-node executable
 RUN chmod +x /app/sdk/p2p-node.js
 
-# Build the project
-RUN pnpm run build
 
 # Expose both P2P and HTTP ports
 EXPOSE 8000 3000
