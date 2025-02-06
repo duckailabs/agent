@@ -11,10 +11,22 @@ const packageJson = JSON.parse(
 const version = process.env.P2P_VERSION || packageJson.p2pNodeVersion;
 const baseUrl = "https://github.com/duckailabs/node/releases/download";
 
+// Create dist directory if it doesn't exist
+const distDir = path.join(__dirname, "../dist");
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir);
+}
+
 // Create proto directory if it doesn't exist
-const protoDir = path.join(__dirname, "..", "proto");
+const protoDir = path.join(distDir, "proto");
 if (!fs.existsSync(protoDir)) {
   fs.mkdirSync(protoDir);
+}
+
+// Create node directory if it doesn't exist
+const nodeDir = path.join(distDir, "node");
+if (!fs.existsSync(nodeDir)) {
+  fs.mkdirSync(nodeDir);
 }
 
 async function downloadFile(url, outputPath) {
@@ -52,7 +64,7 @@ async function main() {
   try {
     // Download p2p-node.js
     console.log("Downloading p2p-node.js...");
-    const nodePath = path.join(__dirname, "..", "p2p-node.js");
+    const nodePath = path.join(nodeDir, "p2p-node.js");
     await downloadFile(`${baseUrl}/v${version}/p2p-node.js`, nodePath);
     console.log("Downloaded p2p-node.js");
 

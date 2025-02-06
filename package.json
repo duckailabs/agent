@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "dotenv -e .env -- tsx src/index.ts",
+    "monitor": "dotenv -e .env -- tsx src/monitor.ts",
     "typecheck": "tsc --noEmit",
     "deploy:fly": "fly deploy --ha=false",
     "logs": "fly logs",

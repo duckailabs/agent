@@ -5,9 +5,21 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Logger } from "../../src/utils/logger";
-import { MessageHandler, P2PClientOptions, P2PNodeOptions } from "./types";
+import {
+  ListAgentsResponse,
+  MessageHandler,
+  P2PClientOptions,
+  P2PNodeOptions,
+} from "./types";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export interface AgentInfo {
+  agentId: string;
+  peerId: string;
+  agentName: string;
+  connectedSince: number;
+}
 
 export class P2PClient {
   private client: any;
@@ -20,7 +32,7 @@ export class P2PClient {
 
   constructor(private options: P2PClientOptions) {
     this.timeout = options.timeout || 5000;
-    this.protoPath = path.resolve(__dirname, "../proto/p2p.proto");
+    this.protoPath = path.resolve(__dirname, "../../dist/proto/p2p.proto");
   }
 
   /**
@@ -297,6 +309,48 @@ export class P2PClient {
     if (this.nodeProcess) {
       this.nodeProcess.kill();
       this.nodeProcess = undefined;
+    }
+  }
+
+  /**
+   * List all agents in the P2P network
+   */
+  async listAgents(): Promise<ListAgentsResponse> {
+    if (!this.connected || !this.client) {
+      throw new Error("Not connected to P2P network");
+    }
+
+    try {
+      return new Promise<ListAgentsResponse>((resolve, reject) => {
+        this.client.ListAgents(
+          {},
+          (error: Error | null, response: ListAgentsResponse) => {
+            if (error) {
+              Logger.error("p2p", "Failed to list agents", {
+                error: error.message,
+              });
+              reject(error);
+            } else {
+              // Add debug logging
+              /* Logger.debug("p2p", "Raw ListAgents response", {
+                response,
+                hasRecords: !!response?.agents,
+                recordKeys: response?.agents
+                  ? Object.keys(response.agents)
+                  : [],
+              }); */
+
+              resolve(response);
+            }
+          }
+        );
+      });
+    } catch (error) {
+      throw new Error(
+        `Failed to list agents: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
   }
 }
